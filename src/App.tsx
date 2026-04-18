@@ -47,8 +47,8 @@ const speak = (text: string, onEnd?: () => void) => {
   
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = 'es-ES';
-  utterance.rate = 0.9;
-  utterance.pitch = 0.8; // Lower pitch for deeper "system" feel
+  utterance.rate = 1.1; // Slightly faster
+  utterance.pitch = 0.8; 
   
   // Find a female voice if possible
   const voices = window.speechSynthesis.getVoices();
@@ -94,7 +94,7 @@ const StarBackground = () => {
   );
 };
 
-const Typewriter = ({ text, onComplete, speed = 40 }: { text: string; onComplete?: () => void; speed?: number }) => {
+const Typewriter = ({ text, onComplete, speed = 25 }: { text: string; onComplete?: () => void; speed?: number }) => {
   const [displayedText, setDisplayedText] = useState("");
   const [index, setIndex] = useState(0);
 
@@ -165,23 +165,41 @@ export default function App() {
     speak(text, () => setIsSpeaking(false));
   };
 
-  const handleRescue = (choice: string) => {
+  const handleRescue = (choice: string = "auto") => {
     playSystemBeep();
     setDecisions(prev => [...prev, { worldId: currentWorld.id, choice }]);
     setRescuers(prev => [...prev, currentWorld.id]);
     
+    // Auto-advance if it's the last world, otherwise go to MAP to trigger next
     setTimeout(() => {
       if (rescuers.length + 1 === WORLDS.length) {
         setScene('CLIMAX');
       } else {
-        setScene('MAP');
+        // Find if the next world is a crisis
+        const nextIdx = currentWorldIndex + 1;
+        if (nextIdx < WORLDS.length && WORLDS[nextIdx].isCrisis) {
+          // INTERWEAVE: Jump straight to next crisis without map stop
+          setCurrentWorldIndex(nextIdx);
+          setScene('WORLD');
+        } else {
+          setScene('MAP');
+        }
       }
-    }, 2000);
+    }, currentWorld.isCrisis ? 3000 : 1500);
   };
 
   useEffect(() => {
+    if (scene === 'WORLD' && currentWorld.isCrisis) {
+      handleSpeak(`Alerta de sistema. ${currentWorld.name}. ${currentWorld.narrative}. Identidad procesada.`);
+      // Auto-resolve crisis after some time
+      const timer = setTimeout(() => handleRescue("crisis-resolved"), 6000);
+      return () => clearTimeout(timer);
+    }
+  }, [scene, currentWorldIndex]);
+
+  useEffect(() => {
     if (scene === 'CLIMAX') {
-      const timer = setTimeout(() => setScene('REVEAL'), 5000);
+      const timer = setTimeout(() => setScene('REVEAL'), 4000);
       return () => clearTimeout(timer);
     }
     if (scene === 'FINAL') {
@@ -279,7 +297,7 @@ export default function App() {
               </div>
 
               <h1 className="text-4xl md:text-5xl font-bold tracking-tighter leading-none">
-                <Typewriter text="Capitana Ammi... necesitamos tu ayuda." speed={60} />
+                <Typewriter text="Capitana Ammi... necesitamos tu ayuda." speed={30} />
               </h1>
 
               <div className="space-y-6 text-lg text-gray-400 font-light max-w-md mx-auto">
@@ -399,71 +417,92 @@ export default function App() {
           {scene === 'WORLD' && (
             <motion.div 
               key="world"
-              initial={{ opacity: 0, x: 100 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -100 }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.2, filter: 'blur(20px)' }}
               className="w-full space-y-8"
             >
               <div className="flex items-center justify-between gap-4 mb-2">
-                <span className="px-3 py-1 bg-purple-500/20 border border-purple-500/40 text-purple-400 text-xs font-mono uppercase rounded-full">
-                  Mundo {currentWorld.id} / 15
+                <span className={`px-3 py-1 border text-xs font-mono uppercase rounded-full ${currentWorld.isCrisis ? 'bg-red-500/20 border-red-500 text-red-500 animate-pulse' : 'bg-purple-500/20 border-purple-500 text-purple-400'}`}>
+                  {currentWorld.isCrisis ? '[ FALLA DEL SISTEMA ]' : `Mundo ${currentWorld.id} / 15`}
                 </span>
-                <button 
-                  onClick={() => handleSpeak(`${currentWorld.name}. ${currentWorld.narrative}. ${currentWorld.question}`)}
-                  className={`flex items-center gap-2 p-2 px-4 rounded-full transition-all border ${isSpeaking ? 'bg-cyan-500/20 border-cyan-500 text-cyan-400' : 'bg-white/5 border-white/10 text-purple-400 hover:bg-white/10'}`}
-                >
-                  <Volume2 size={18} className={isSpeaking ? 'animate-pulse' : ''} />
-                  <span className="text-xs uppercase tracking-widest font-bold">Relato del sistema</span>
-                </button>
+                {!currentWorld.isCrisis && (
+                  <button 
+                    onClick={() => handleSpeak(`${currentWorld.name}. ${currentWorld.narrative}. ${currentWorld.question}`)}
+                    className={`flex items-center gap-2 p-2 px-4 rounded-full transition-all border ${isSpeaking ? 'bg-cyan-500/20 border-cyan-500 text-cyan-400' : 'bg-white/5 border-white/10 text-purple-400 hover:bg-white/10'}`}
+                  >
+                    <Volume2 size={18} className={isSpeaking ? 'animate-pulse' : ''} />
+                    <span className="text-xs uppercase tracking-widest font-bold">Relato</span>
+                  </button>
+                )}
               </div>
 
               <header>
-                <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-4">
+                <h2 className={`text-4xl md:text-5xl font-bold tracking-tight mb-4 ${currentWorld.isCrisis ? 'text-red-500 font-mono' : 'text-white'}`}>
                   {currentWorld.name}
                 </h2>
-                <div className="h-0.5 w-20 bg-purple-500" />
+                <div className={`h-0.5 w-20 ${currentWorld.isCrisis ? 'bg-red-500' : 'bg-purple-500'}`} />
               </header>
 
-              <div className="p-6 rounded-3xl bg-white/5 border border-white/10 relative overflow-hidden group">
+              <div className={`p-6 rounded-3xl border relative overflow-hidden group ${currentWorld.isCrisis ? 'bg-red-500/5 border-red-500/20' : 'bg-white/5 border-white/10'}`}>
+                {currentWorld.isCrisis && (
+                  <div className="absolute inset-0 bg-red-500/5 animate-pulse" />
+                )}
                 <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                  <Sparkles size={80} className="text-purple-400" />
+                  {currentWorld.isCrisis ? <AlertCircle size={80} className="text-red-500" /> : <Sparkles size={80} className="text-purple-400" />}
                 </div>
-                <p className="text-xl leading-relaxed text-gray-200 font-light">
+                <p className={`text-xl leading-relaxed font-light ${currentWorld.isCrisis ? 'text-red-200' : 'text-gray-200'}`}>
                   {currentWorld.narrative}
                 </p>
               </div>
 
-              <div className="space-y-6">
-                <div className="flex gap-2 items-center text-purple-300 font-medium font-mono text-sm">
-                  <AlertCircle size={18} />
-                  <h3>[ ENTRADA REQUERIDA ]: {currentWorld.question}</h3>
-                </div>
+              {!currentWorld.isCrisis ? (
+                <div className="space-y-6">
+                  <div className="flex gap-2 items-center text-purple-300 font-medium font-mono text-sm">
+                    <AlertCircle size={18} />
+                    <h3>[ ENTRADA REQUERIDA ]: {currentWorld.question}</h3>
+                  </div>
 
-                <div className="grid gap-3">
-                  {currentWorld.options.map((option, idx) => (
-                    <motion.button
-                      key={idx}
-                      whileHover={{ scale: 1.02, x: 5 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => handleRescue(option.value)}
-                      className="p-5 text-left rounded-2xl bg-gray-900 border border-white/10 hover:border-purple-500/50 hover:bg-purple-500/5 transition-all flex justify-between items-center group"
-                    >
-                      <span className="text-gray-300 group-hover:text-white transition-colors">{option.label}</span>
-                      <ChevronRight size={18} className="text-gray-600 group-hover:text-purple-500" />
-                    </motion.button>
-                  ))}
+                  <div className="grid gap-3">
+                    {currentWorld.options?.map((option, idx) => (
+                      <motion.button
+                        key={idx}
+                        whileHover={{ scale: 1.02, x: 5 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => handleRescue(option.value)}
+                        className="p-5 text-left rounded-2xl bg-gray-900 border border-white/10 hover:border-purple-500/50 hover:bg-purple-500/5 transition-all flex justify-between items-center group"
+                      >
+                        <span className="text-gray-300 group-hover:text-white transition-colors">{option.label}</span>
+                        <ChevronRight size={18} className="text-gray-600 group-hover:text-purple-500" />
+                      </motion.button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="space-y-6">
+                  <div className="flex flex-col items-center justify-center p-8 bg-black/40 rounded-3xl border border-red-500/20">
+                     <motion.div 
+                        animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                        transition={{ duration: 1, repeat: Infinity }}
+                        className="w-16 h-16 rounded-full border-4 border-red-500 border-t-transparent animate-spin mb-4"
+                     />
+                     <p className="text-red-400 font-mono text-sm animate-pulse">AUTOPROCESANDO CRISIS...</p>
+                     <p className="text-gray-500 text-xs mt-2">La voluntad de Ammi está resolviendo el problema técnico.</p>
+                  </div>
+                </div>
+              )}
 
               {/* Feedback toast shown after selection */}
               {decisions.length > currentWorldIndex && (
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }} 
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-purple-600/20 border border-purple-500/50 p-4 rounded-xl text-center"
+                  className={`${currentWorld.isCrisis ? 'bg-red-500/20 border-red-500/50' : 'bg-purple-600/20 border-purple-500/50'} p-4 rounded-xl text-center`}
                 >
-                  <p className="text-purple-300 mb-2 font-mono text-sm">Interesante elección, capitana...</p>
-                  <p className="font-bold text-lg text-white">IDENTIDAD SINCRONIZADA: <span className="text-purple-400 uppercase tracking-widest">{currentWorld.quality}</span></p>
+                  <p className={`${currentWorld.isCrisis ? 'text-red-400' : 'text-purple-300'} mb-2 font-mono text-sm`}>
+                    {currentWorld.isCrisis ? '[ SISTEMA RESTAURADO ]' : 'Interesante elección, capitana...'}
+                  </p>
+                  <p className="font-bold text-lg text-white font-mono uppercase tracking-[0.2em]">{currentWorld.quality}</p>
                 </motion.div>
               )}
             </motion.div>

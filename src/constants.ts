@@ -4,8 +4,9 @@ export interface World {
   name: string;
   narrative: string;
   quality: string;
-  question: string;
-  options: {
+  question?: string;
+  isCrisis?: boolean;
+  options?: {
     label: string;
     value: string;
   }[];
@@ -15,181 +16,144 @@ export const WORLDS: World[] = [
   {
     id: 1,
     name: "Mundo del Silencio",
-    narrative: "Una vasta llanura donde el viento no hace ruido. Al fondo, una figura observa las estrellas sin decir una palabra. Parece cómoda en su soledad, pero el sistema indica que su tiempo aquí se agota.",
+    narrative: "Una llanura muda. Al fondo, una figura observa las estrellas. Te acercas y notas que su soledad no es vacío, sino observación pura.",
     quality: "La Observadora",
-    question: "¿Cómo te acercas a ella?",
+    question: "¿Cómo rompes el silencio?",
     options: [
-      { label: "Me acerco aunque me cueste romper el silencio", value: "direct" },
-      { label: "Observo primero desde la distancia", value: "observant" },
-      { label: "Prefiero no intervenir hasta que haga una señal", value: "cautious" }
+      { label: "Con un saludo directo", value: "direct" },
+      { label: "Observando con ella un rato", value: "patient" },
+      { label: "Dejando una señal discreta", value: "subtle" }
     ]
   },
   {
     id: 2,
-    name: "Mundo de los Vínculos",
-    narrative: "Cadenas de luz conectan todo en este lugar. Alguien sostiene un lazo roto, intentando repararlo con sus propias manos, ignorando el cansancio. Su compromiso es total.",
+    name: "ALERTA: Falla de Red Neuronal",
+    narrative: "Los sistemas de la nave parpadean. El soporte vital flaquea. El sistema sugiere abandonar el sector, pero sabes que hay alguien ahí abajo esperándote. Te mantienes firme en tu puesto.",
     quality: "La Leal",
-    question: "Ves que el lazo vuelve a romperse. ¿Qué haces?",
-    options: [
-      { label: "Le ayudo a sostenerlo", value: "supportive" },
-      { label: "Busco una herramienta mejor", value: "practical" },
-      { label: "Le pregunto si vale la pena tanto esfuerzo", value: "analytical" }
-    ]
+    isCrisis: true
   },
   {
     id: 3,
     name: "Mundo del Prisma",
-    narrative: "Colores que no existen en la Tierra flotan en el aire. Una joven dibuja en el vacío, creando mundos enteros con solo imaginarlo. A veces parece perdida en sus propias creaciones.",
+    narrative: "Colores imposibles. Una joven dibuja en el aire. Te pide un tono que defina tu misión.",
     quality: "La Creadora",
-    question: "Te pide un color para completar su obra. ¿Tú qué eliges?",
+    question: "¿Qué color eliges?",
     options: [
-      { label: "Un azul profundo como el cosmos", value: "dreamer" },
-      { label: "Un naranja vibrante como una supernova", value: "energetic" },
-      { label: "Un blanco puro que contenga todos los colores", value: "holistic" }
+      { label: "Azul cósmico", value: "deep" },
+      { label: "Oro supernova", value: "bright" },
+      { label: "Violeta nebulosa", value: "mystic" }
     ]
   },
   {
     id: 4,
-    name: "Mundo de los Ecos",
-    narrative: "Voces del pasado resuenan en las cuevas. En el centro, alguien camina hacia lo desconocido sin mirar atrás, aunque sus manos tiemblan ligeramente.",
+    name: "CRISIS: Brecha en el Casco",
+    narrative: "Una explosión técnica sacude la nave. El vacío intenta entrar. Mantienes la calma, sellas la brecha manualmente sin decir una sola palabra de pánico. Tu coraje es silencioso.",
     quality: "La Valiente Silenciosa",
-    question: "La oscuridad total está por llegar. ¿Qué le dices?",
-    options: [
-      { label: "No estás sola en la oscuridad", value: "empathetic" },
-      { label: "Sigue adelante, el sensor detecta una salida", value: "logical" },
-      { label: "Camina con cuidado, yo te cubro", value: "protective" }
-    ]
+    isCrisis: true
   },
   {
     id: 5,
     name: "Mundo de Cristal",
-    narrative: "Todo es frágil aquí. Un susurro podría romper el suelo. Una persona llora ante la belleza de una flor de cristal que está por marchitarse.",
+    narrative: "Todo es frágil. Alguien llora por una flor marchita. Sientes su dolor como si fuera tuyo.",
     quality: "La Sensible",
-    question: "Ella te entrega la flor, temiendo que se rompa en sus manos. ¿Cómo la recibes?",
+    question: "¿Qué haces con la flor?",
     options: [
-      { label: "Con una suavidad extrema, casi sin tocarla", value: "delicate" },
-      { label: "La aseguro en un contenedor especial", value: "protective" },
-      { label: "Le digo que su belleza no depende de su fragilidad", value: "philosophical" }
+      { label: "La guardo con ternura", value: "tender" },
+      { label: "La transformo en luz", value: "transformative" }
     ]
   },
   {
     id: 6,
-    name: "Mundo de las Mareas Altas",
-    narrative: "El agua sube y baja constantemente. Alguien intenta escalar un muro de roca que siempre vuelve a mojarse, resbalando una y otra vez sin rendirse.",
+    name: "ERROR: Fatiga de Motores",
+    narrative: "El motor de salto se ha bloqueado. La nave está varada en el vacío. Intentas el arranque 47 veces. No te rindes hasta que el motor ruge de nuevo.",
     quality: "La Perseverante",
-    question: "Vuelve a caer. ¿Qué le ofreces?",
-    options: [
-      { label: "Mi mano para intentarlo una vez más", value: "tenacious" },
-      { label: "Un momento de descanso antes de seguir", value: "compassionate" },
-      { label: "Analizar el patrón de las olas para subir mejor", value: "strategic" }
-    ]
+    isCrisis: true
   },
   {
     id: 7,
     name: "Mundo del Oráculo",
-    narrative: "Libros flotantes y mapas astrales llenan el aire. Una anciana con ojos jóvenes lee patrones en el polvo estelar, buscando respuestas que otros ni siquiera saben preguntar.",
+    narrative: "Polvo de estrellas que forma mapas. Una anciana te ofrece una verdad sobre ti misma a cambio de una pregunta.",
     quality: "La Sabia",
-    question: "Te permite hacerle una sola pregunta sobre el mañana. ¿Qué preguntas?",
+    question: "¿Qué quieres saber?",
     options: [
-      { label: "¿Cuál es mi verdadero propósito?", value: "seeker" },
-      { label: "¿Cómo puedo salvar a todos?", value: "altruistic" },
-      { label: "¿Qué es lo que aún no he visto de mí?", value: "reflective" }
+      { label: "¿Por qué yo?", value: "purpose" },
+      { label: "¿Qué falta por sanar?", value: "healing" }
     ]
   },
   {
     id: 8,
-    name: "Mundo de los Espejos",
-    narrative: "Miles de reflejos, todos diferentes. Alguien camina entre ellos buscando su propia imagen, pero cada espejo muestra una versión distorsionada.",
+    name: "CRITICAL: Sincronización de Núcleo",
+    narrative: "El espejo del puente de mando parpadea. Ves tu reflejo, pero sin el traje de capitana. Te reconoces. Eres tú, sin máscaras. Por fin eres auténtica.",
     quality: "La Auténtica",
-    question: "Encuentra un espejo que no muestra nada. Ella te mira confundida. ¿Qué dices?",
-    options: [
-      { label: "Ese es el único que muestra tu esencia real", value: "deep" },
-      { label: "Tú eres quien debe pintar esa imagen", value: "inspiring" },
-      { label: "Tu reflejo está en lo que haces, no en lo que ves", value: "practical" }
-    ]
+    isCrisis: true
   },
   {
     id: 9,
     name: "Mundo del Escudo",
-    narrative: "Tormentas de arena golpean sin piedad. Una figura se mantiene firme, protegiendo con su cuerpo a un pequeño ser que duerme, recibiendo ella todo el impacto.",
+    narrative: "Tormentas de arena. Alguien protege a un pequeño ser. Te pones frente a la tormenta para darles un respiro.",
     quality: "La Protectora",
-    question: "La tormenta empeora. ¿Te unes a ella para cubrir al pequeño?",
+    question: "¿Cómo los cubres?",
     options: [
-      { label: "Sí, mi escudo es lo suficientemente grande para ambos", value: "brave" },
-      { label: "Busco un refugio cercano para llevarlos", value: "resourceful" },
-      { label: "Le doy mi capa protectora para que resista mejor", value: "selfless" }
+      { label: "Abriendo mi capa", value: "gentle" },
+      { label: "Usando el escudo de la nave", value: "tech" }
     ]
   },
   {
     id: 10,
-    name: "Mundo del Reloj Arena",
-    narrative: "El tiempo fluye visualmente. Alguien observa cómo la arena cae, meditando sobre cada grano, sin prisa por llegar a ninguna parte.",
+    name: "ALERTA: Dilatación Temporal",
+    narrative: "El tiempo se estira. Los minutos parecen años. Te sientas en el puente, observas el flujo de la vida y comprendes que cada segundo tiene un peso eterno.",
     quality: "La Reflexiva",
-    question: "Te dice que el tiempo es solo una ilusión del corazón. ¿Qué respondes?",
-    options: [
-      { label: "Entonces el corazón es el verdadero motor", value: "poetic" },
-      { label: "Prefiero vivir el presente sin cuestionarlo tanto", value: "grounded" },
-      { label: "Dime más sobre lo que has descubierto", value: "curious" }
-    ]
+    isCrisis: true
   },
   {
     id: 11,
     name: "Mundo de los Engranajes",
-    narrative: "Una ciudad mecánica que dejó de funcionar. Una joven con herramientas en el cinturón desarma y vuelve a armar piezas, buscando la chispa que lo inicie todo.",
+    narrative: "Una ciudad detenida. Falta una pieza. Tienes que improvisar con lo que hay en tu cinturón.",
     quality: "La Ingeniosa",
-    question: "Le falta una pieza pequeña. Tú tienes un objeto que podría encajar pero es importante para tu nave. ¿Se lo das?",
+    question: "¿Qué usas?",
     options: [
-      { label: "Se lo doy, la misión es salvarla a ella", value: "generous" },
-      { label: "Busco una alternativa creativa con lo que hay allí", value: "clever" },
-      { label: "Analizo si el riesgo de mi nave vale el beneficio", value: "prudent" }
+      { label: "Una pieza de mi casco", value: "sacrifice" },
+      { label: "Un cable sobrante", value: "clever" }
     ]
   },
   {
     id: 12,
     name: "Mundo del Hierro",
-    narrative: "Gravedad extrema. Cada paso pesa toneladas. Alguien se mantiene de pie, con la espalda recta, a pesar de que el entorno intenta aplastarla.",
+    narrative: "Gravedad extrema. Caminas pesado pero firme. El entorno intenta doblegarte, pero tu voluntad es de acero.",
     quality: "La Firme",
-    question: "La presión aumenta. Ella te mira buscando apoyo visual. ¿Qué gesto haces?",
+    question: "¿Cómo respondes al peso?",
     options: [
-      { label: "Un saludo militar, reconociendo su fuerza", value: "respectful" },
-      { label: "Me pongo a su lado, resistiendo con ella", value: "loyal" },
-      { label: "Le indico el camino hacia una zona de baja presión", value: "helpful" }
+      { label: "Enderezando la espalda", value: "pride" },
+      { label: "Avanzando paso a paso", value: "steady" }
     ]
   },
   {
     id: 13,
-    name: "Mundo de las Cicatrices",
-    narrative: "Un campo de batalla olvidado. Alguien cura las heridas de seres que ya no pueden agradecerle, poniendo flores donde hubo dolor.",
+    name: "CRISIS: Parche de Empatía IA",
+    narrative: "La inteligencia artificial de la nave sufre un error emocional. Se siente 'sola'. En lugar de reiniciarla, le hablas como a una amiga. La sanas con tu compasión.",
     quality: "La Compasiva",
-    question: "Ves que ella misma tiene una herida que ignora. ¿Qué haces?",
-    options: [
-      { label: "Le pido permiso para curarla yo", value: "kind" },
-      { label: "Le traigo más flores para que siga su labor", value: "supportive" },
-      { label: "Le recuerdo que ella también importa", value: "empathetic" }
-    ]
+    isCrisis: true
   },
   {
     id: 14,
     name: "Mundo de la Semilla",
-    narrative: "Un desierto infinito. Una persona espera frente a una semilla plantada en la arena, regándola con su última reserva de agua, esperando un brote.",
+    narrative: "Un desierto. Alguien espera un brote que no llega. Te sientas a su lado y esperas. El tiempo no importa cuando la fe es grande.",
     quality: "La Paciente",
-    question: "Pasan las horas y nada sucede. ¿Qué le dices?",
+    question: "¿Qué dices mientras esperas?",
     options: [
-      { label: "Las raíces crecen primero hacia abajo, aunque no se vea", value: "wise" },
-      { label: "Te ayudaré a traer más agua", value: "active" },
-      { label: "Esperemos juntos un poco más", value: "patient" }
+      { label: "Llegará cuando sea el momento", value: "trust" },
+      { label: "El agua está en camino", value: "hope" }
     ]
   },
   {
     id: 15,
     name: "Mundo de la Aurora",
-    narrative: "Luces celestiales cubren el cielo. Una figura está en la cima de una montaña, extendiendo los brazos hacia la luz que parece llamarla por su nombre.",
+    narrative: "El último umbral. La luz te envuelve. Una voz te dice: 'Has llegado a casa'. Es La Llamada final.",
     quality: "La Llamada",
-    question: "La voz del sistema parpadea: 'Identidad detectada'. Ella se gira y te sonríe. ¿Qué sientes?",
+    question: "¿Cruzas el umbral?",
     options: [
-      { label: "Una paz que no puedo explicar", value: "peaceful" },
-      { label: "Una urgencia por saber quién es realmente", value: "intense" },
-      { label: "Que este es el final de un largo viaje", value: "fulfilled" }
+      { label: "Sí, estoy lista", value: "ready" },
+      { label: "Llevo a todos conmigo", value: "leader" }
     ]
   }
 ];
