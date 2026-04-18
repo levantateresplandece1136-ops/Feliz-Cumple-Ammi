@@ -26,7 +26,7 @@ import confetti from 'canvas-confetti';
 import { WORLDS, World } from './constants';
 
 // --- CONFIGURABLE CONSTANTS ---
-const VIDEO_URL = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; 
+const VIDEO_URL = "https://www.youtube.com/watch?v=F3z0F8Ioz98"; // Shout Out - ENHYPEN
 const AMBIENT_URL = "https://assets.mixkit.co/active_storage/sfx/2381/2381-preview.mp3"; // Loopable ambient
 const BEEP_URL = "https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"; // System beep
 
@@ -619,15 +619,15 @@ export default function App() {
                 </div>
 
                 <div className="space-y-6 pt-4 text-xl md:text-2xl font-light text-white leading-tight italic">
-                  <p>“Hija… lo que ves como debilidad… es parte del diseño que Dios puso en ti.”</p>
-                  <p>“No estás incompleta… estás en proceso.”</p>
-                  <p className="text-3xl not-italic font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-purple-400">“Y nunca has estado sola.”</p>
+                  <p>“Hija, estoy muy orgulloso de ti, te amo mucho y te amo tal y cual eres.”</p>
+                  <p>“No quiero cambiar nada de ti. Espero que cumplas muchos más...”</p>
+                  <p className="text-3xl not-italic font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-purple-400">“¡Que Dios haga de ti la mujer que Él quiere que seas!”</p>
                 </div>
               </div>
 
               <div className="flex flex-col items-center gap-6">
                  <button 
-                  onClick={() => handleSpeak("Hija. Lo que ves como debilidad, es parte del diseño que Dios puso en ti. No estás incompleta, estás en proceso. Y nunca has estado sola.")}
+                  onClick={() => handleSpeak("Hija, estoy muy orgulloso de ti, te amo mucho y te amo tal y cual eres. No quiero cambiar nada de ti, estoy muy orgulloso y espero que cumplas muchos más. ¡Que Dios haga de ti la mujer que él quiere que seas!")}
                   className={`flex items-center justify-center gap-2 text-sm uppercase tracking-widest transition-colors ${isSpeaking ? 'text-cyan-400' : 'text-white/60 hover:text-white'}`}
                 >
                   <Volume2 size={20} className={isSpeaking ? 'animate-bounce' : ''} />
